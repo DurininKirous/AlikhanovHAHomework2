@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-#include <string.h>
 #include "ClassMatrix.h"
-void Matrix::Print() 
+template<typename T>
+void Matrix<T>::Print()
 {
     for (int i = 0; i < lines; i++)
     {
@@ -17,7 +17,8 @@ void Matrix::Print()
     }
     std::cout << "\n";
 }
-void Matrix::Init() 
+template<typename T>
+void Matrix<T>::Init()
 {
     std::cout << "Заполните матрицу!\n";
     for (int i = 0; i < lines; i++)
@@ -28,150 +29,154 @@ void Matrix::Init()
         }
     }
 }
-void Matrix::WriteToAFile()
+template<typename T>
+void Matrix<T>::WriteToAFile()
 {
-    char FileName[128];
-    std::cout << "Введите имя файла для вывода:";
+    std::string FileName;
+    std::cout << "Enter the name of file:";
     std::cin >> FileName;
-    FileName[strcspn(FileName, "\n")] = '\0';
-    FILE* write = NULL;
-    fopen(FileName, "w");
+    FileName[FileName.find("\n")] = '\0';
+    std::ofstream out;
+    out.open(FileName);
     for (int i = 0; i < lines; i++) {
-        fprintf(write, "%s", "[");
+        out <<"[";
         for (int j = 0; j < columns; j++) {
-            if (j != columns - 1) { fprintf(write, "%g ", *(*(matrix + i) + j)); }
-            else { fprintf(write, "%g", *(*(matrix + i) + j)); }
+            out <<matrix[i][j];
+            if (j == columns - 1) { out <<"]"; }
         }
-        fprintf(write, "%s", "]\n");
+        out <<"]";
     }
-    fclose(write);
+    out.close();
 }
-void Matrix::Comprassion(const Matrix Second)
+template<typename T>
+void Matrix<T>::FirstElementaryTransformation(int FirstLine, int SecondLine)
 {
-    if (*this == Second) {
-        std::cout << "Они одинаковы!\n";
-    }
-    else if (*this != Second) {
-        std::cout << "Они неодинаковы!\n";
-    }
-}
-void Matrix::FirstElementaryTransformation(int FirstLine, int SecondLine)
-{
-    double tmp;
+    T tmp;
     for (int i = 0; i < columns; i++) {
-        tmp = *(*(matrix+FirstLine)+i);
-        *(*(matrix + FirstLine) + i) = *(*(matrix + SecondLine) + i);
-        *(*(matrix + SecondLine) + i) = tmp;
+        tmp = matrix[FirstLine][i];
+        matrix[FirstLine][i] = matrix[SecondLine][i];
+        matrix[SecondLine][i] = tmp;
     }
 }
-void Matrix::SecondElementaryTransformation(int ChangeLine, int MultiPlier)
+template<typename T>
+void Matrix<T>::SecondElementaryTransformation(int ChangeLine, T MultiPlier)
 {
     for (int i = 0; i < columns; i++) {
-        *(*(matrix + ChangeLine) + i) *= MultiPlier;
+        matrix[ChangeLine][i] *= MultiPlier;
     }
 }
-void Matrix::ThirdElementaryTransformation(int TakeLine, int MultiPlier, int ChangeLine)
+template<typename T>
+void Matrix<T>::ThirdElementaryTransformation(int TakeLine, T MultiPlier, int ChangeLine)
 {
     for (int i = 0; i < columns; i++) {
-        *(*(matrix + ChangeLine) + i) += *(*(matrix + TakeLine) + i) * MultiPlier;
+        matrix[ChangeLine][i] += matrix[TakeLine][i] * MultiPlier;
     }
 }
-double Matrix::Determinant()
+template<typename T>
+double Matrix<T>::Determinant()
 {
     Matrix& p = *this;
     double det = 0;
     if (lines != columns) 
     {
-        std::cout << "Определитель не существует для неквадратной матрицы\n";
+        std::cout << "There is no determinant for such a matrix\n";
         return 0;
     }
     else {
         if ((columns-p.columns) ==  columns-1) 
         { 
-            return *(*(p.matrix)); 
+            return p.matrix[0][0];
         }
         for (int i = 0; i < p.columns; i++) 
         {
             Matrix NewMatrix(p, 0, i);
-            det += *(*(p.matrix)+i) * pow(-1, i + 2)* NewMatrix.Determinant();
+            det += p.matrix[0][i] * pow(-1, i + 2)* NewMatrix.Determinant();
         }
         return det;
     }
 }
-void Matrix::Transposition()
+template<typename T>
+void Matrix<T>::Transposition()
 {
     double tmp;
     for (int i = 0; i < lines; i++) {
         for (int j = 0; j < i; j++) {
-            tmp = *(*(matrix + i) + j);
-            *(*(matrix+i)+j) = *(*(matrix + j) + i);
-            *(*(matrix + j) + i) = tmp;
+            tmp = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = tmp;
         }
     }
 }
-int Matrix::GetLines() 
+template<typename T>
+int Matrix<T>::GetLines()
 {
     return lines;
 }
-int Matrix::GetColumns() 
+template<typename T>
+int Matrix<T>::GetColumns()
 {
     return columns;
 }
-double** Matrix::GetMatrix() 
+template<typename T>
+T** Matrix<T>::GetMatrix()
 {
     return matrix;
 }
-Matrix::Matrix() 
+template<typename T>
+Matrix<T>::Matrix()
 {
     int lines, columns;
-    std::cout << "Введите количество строк:"; std::cin >> lines;
-    std::cout << "Введите количество столбцов:"; std::cin >> columns;
+    std::cout << "Enter the number of lines:"; std::cin >> lines;
+    std::cout << "Enter  the number of columns:"; std::cin >> columns;
     this->lines = lines;
     this->columns = columns;
-    matrix = new double* [lines];
+    matrix = new T* [lines];
     for (int i = 0; i < lines; i++)
     {
-        *(matrix+i) = new double[columns];
+        *matrix[i] = new T[columns];
     }
     Init();
 }
-Matrix::Matrix(int lines, int columns, double **OtherMatrix)
+template<typename T>
+Matrix<T>::Matrix(int lines, int columns, T **OtherMatrix)
 {
     this->lines = lines;
     this->columns = columns;
-    double** matrix = new double*[lines];
+    T** matrix = new T*[lines];
     for (int i = 0; i < lines; i++)
     {
-        *(matrix + i) = new double[columns];
+        matrix[i] = new T[columns];
     }
     for (int i=0;i<lines;i++) 
     {
         for (int j = 0; j < columns; j++) 
         {
-            *(*(matrix + i) + j) = *(*(OtherMatrix + i) + j);
+            matrix[i][j] = OtherMatrix[i][j];
         }
     }
     this->matrix = matrix;
 }
-Matrix::Matrix(int lines, int columns) 
+template<typename T>
+Matrix<T>::Matrix(int lines, int columns)
 {
     this->lines = lines;
     this->columns = columns;
-    double** matrix = new double* [lines];
+    T** matrix = new T* [lines];
     for (int i = 0; i < lines; i++)
     {
-        *(matrix+i) = new double[columns];
+        matrix[i] = new T[columns];
     }
     for (int i = 0; i < lines; i++)
     {
         for (int j = 0; j < columns; j++)
         {
-            *(*(matrix + i) + j) = 0;
+            matrix[i][j] = 0;
         }
     }
     this->matrix = matrix;
 }
-Matrix::Matrix(const Matrix &p)
+template<typename T>
+Matrix<T>::Matrix(const Matrix &p)
 {
     lines = p.lines;
     columns = p.columns;
@@ -189,7 +194,8 @@ Matrix::Matrix(const Matrix &p)
     }
     this->matrix = matrix;
 }
-Matrix::Matrix(const Matrix p, int line, int column) 
+template<typename T>
+Matrix<T>::Matrix(const Matrix p, int line, int column)
 {
     int k = 0;
     int m = 0;
@@ -213,7 +219,8 @@ Matrix::Matrix(const Matrix p, int line, int column)
     }
     this->matrix = matrix;
 }
-Matrix::Matrix(char *FileName)
+template<typename T>
+Matrix<T>::Matrix(std::string FileName)
 {
     if (strchr(FileName, '\n') != NULL) 
     {
@@ -280,7 +287,8 @@ Matrix::Matrix(char *FileName)
     this->matrix = cpmatrix;
     fclose(file);
 }
-Matrix::~Matrix() 
+template<typename T>
+Matrix<T>::~Matrix()
 {
     for (int i = 0; i < lines; i++)
     {
@@ -391,7 +399,8 @@ Matrix Matrix::operator ! ()
     AlgebraicAdditions.Transposition();
     return Matrix{ AlgebraicAdditions.lines,AlgebraicAdditions.columns,AlgebraicAdditions.matrix };
 }
-Matrix Matrix:: operator * (int a)
+template<typename T>
+Matrix<T> Matrix<T>:: operator * (int a)
 {
     Matrix ReturnMatrix(lines, columns);
     for (int i = 0; i < lines; i++) {
@@ -401,7 +410,8 @@ Matrix Matrix:: operator * (int a)
     }
     return ReturnMatrix;
 }
-bool Matrix:: operator !=(int a)
+template<typename T>
+bool Matrix<T>:: operator !=(int a)
 {
     Matrix NewMatrix(lines, columns);
     for (int i = 0; i < lines; i++) {
@@ -420,7 +430,8 @@ bool Matrix:: operator !=(int a)
     }
     return false;
 }
-bool Matrix::operator ==(int a)
+template<typename T>
+bool Matrix<T>::operator ==(int a)
 {
     Matrix NewMatrix(lines, columns);
     for (int i = 0; i < lines; i++) {
@@ -439,7 +450,8 @@ bool Matrix::operator ==(int a)
     }
     return true;
 }
-Matrix operator * (int a, Matrix First)
+template<typename T>
+Matrix<T> operator * (int a, Matrix<T> First)
 {
     for (int i = 0; i < First.GetLines(); i++) {
         for (int j = 0; j < First.GetColumns(); j++) {
@@ -448,7 +460,8 @@ Matrix operator * (int a, Matrix First)
     }
     return Matrix{ First.GetLines(),First.GetColumns(),First.GetMatrix() };
 }
-bool operator !=(int a, Matrix First)
+template<typename T>
+bool operator !=(int a, Matrix<T> First)
 {
 
     Matrix NewMatrix(First.GetLines(), First.GetColumns());
@@ -468,7 +481,8 @@ bool operator !=(int a, Matrix First)
     }
     return false;
 }
-bool operator ==(int a, Matrix First)
+template<typename T>
+bool operator ==(int a, Matrix<T> First)
 {
     Matrix NewMatrix(First.GetLines(), First.GetColumns());
     for (int i = 0; i < First.GetLines(); i++) {
