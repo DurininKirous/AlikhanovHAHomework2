@@ -1,13 +1,14 @@
 #include "ClassMatrix.h"
-#include <iostream>
 int main()
 {
-    setlocale(LC_ALL, "RUS");
-    Matrix matrix1;
+    Matrix<int> matrix1;
+    matrix1.Print();
     std::string FileName;
     std::cout << "Enter the name of file (MatrixExample.txt)";
-    std::getline(std::cin, FileName);
-    Matrix matrix2(FileName); //Reading matrix from file
+    std::cin >>FileName;
+    Matrix<double> matrix2(FileName); //Reading matrix from file
+    matrix2.Print();
+    /*
     matrix1.WriteToAFile(); //Writing matrix to file
     std::cout << "Matrix multiplication: " << std::endl;
     (matrix1 * matrix2).Print();
@@ -31,5 +32,5 @@ int main()
     std::cout << "Matrix determinant: " << std::endl;
     std::cout << matrix1.Determinant()<<std::endl;
     std::cout << "Inverse matrix: " << std::endl;
-    (!matrix1).Print();
+    (!matrix1).Print();*/
 }

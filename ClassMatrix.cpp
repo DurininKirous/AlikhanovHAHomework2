@@ -1,34 +1,8 @@
-#include <iostream>
+/*#include <iostream>
 #include <cmath>
 #include <fstream>
 #include "ClassMatrix.h"
-template<typename T>
-void Matrix<T>::Print()
-{
-    for (int i = 0; i < lines; i++)
-    {
-        std::cout << "[";
-        for (int j = 0; j < columns; j++)
-        {
-            if (j != columns - 1) { std::cout << *(*(matrix+i)+j) << " "; }
-            else { std::cout << *(*(matrix + i) + j); }
-        }
-        std::cout << "]\n";
-    }
-    std::cout << "\n";
-}
-template<typename T>
-void Matrix<T>::Init()
-{
-    std::cout << "Заполните матрицу!\n";
-    for (int i = 0; i < lines; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            std::cin >> *(*(matrix + i) + j);
-        }
-    }
-}
+
 template<typename T>
 void Matrix<T>::WriteToAFile()
 {
@@ -121,22 +95,9 @@ template<typename T>
 T** Matrix<T>::GetMatrix()
 {
     return matrix;
-}
-template<typename T>
-Matrix<T>::Matrix()
-{
-    int lines, columns;
-    std::cout << "Enter the number of lines:"; std::cin >> lines;
-    std::cout << "Enter  the number of columns:"; std::cin >> columns;
-    this->lines = lines;
-    this->columns = columns;
-    matrix = new T* [lines];
-    for (int i = 0; i < lines; i++)
-    {
-        *matrix[i] = new T[columns];
-    }
-    Init();
-}
+}*/
+
+/*
 template<typename T>
 Matrix<T>::Matrix(int lines, int columns, T **OtherMatrix)
 {
@@ -500,4 +461,4 @@ bool operator ==(int a, Matrix<T> First)
         }
     }
     return true;
-}
+}*/
