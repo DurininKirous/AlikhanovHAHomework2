@@ -3,7 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <vector>
 template <typename T>
 class Matrix {
 private:
@@ -72,19 +71,37 @@ public:
             matrix[SecondLine][i] = tmp;
         }
     }
-    void SecondElementaryTransformation(int ChangeLine, T MultiPlier)
+    template <typename T1>
+    void SecondElementaryTransformation(int ChangeLine, T1 MultiPlier)
     {
         for (int i = 0; i < columns; i++)
         {
             matrix[ChangeLine][i] *= MultiPlier;
         }
     }
-    void ThirdElementaryTransformation(int TakeLine, T MultiPlier, int ChangeLine)
+    template <typename T1>
+    void ThirdElementaryTransformation(int TakeLine, T1 MultiPlier, int ChangeLine)
     {
         for (int i = 0; i < columns; i++)
         {
             matrix[ChangeLine][i] += matrix[TakeLine][i] * MultiPlier;
         }
+    }
+    static Matrix InitializationByZeros(int lines, int columns)
+    {
+        return Matrix{lines, columns};
+    }
+    static Matrix InitializationByUnits(int lines, int columns)
+    {
+        Matrix NewMatrix{lines, columns};
+        for (int i=0;i<NewMatrix.lines;++i)
+        {
+            for (int j=0;j<NewMatrix.columns;++j)
+            {
+                NewMatrix.matrix[i][j]=1;
+            }
+        }
+        return NewMatrix;
     }
     T Determinant()
     {
@@ -289,7 +306,7 @@ public:
             return ReturnMatrix;
         }
         else {
-            std::cerr << "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one\n";
+            throw "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one";
             return MatrixSum{ lines,columns };
         }
     }
@@ -307,7 +324,7 @@ public:
             return ReturnMatrix;
         }
         else {
-            std::cerr << "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one\n";
+            throw "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one";
             return MatrixSub{ lines,columns };
         }
     }
@@ -331,7 +348,7 @@ public:
             return MatrixMult{ lines,Second.GetColumns(),NewMatrix.GetMatrix() };
         }
         else {
-            std::cerr << "Error! The matrices must be of the appropriate size. Return a zero matrix with the same dimension as the first one\n";
+            throw "Error! The matrices must be of the appropriate size. Return a zero matrix with the same dimension as the first one";
             return MatrixMult{ lines,columns };
         }
     }
@@ -374,7 +391,7 @@ public:
         T det = this->Determinant();
         if (det == 0||(lines!=columns))
         {
-            std::cerr << "Error! The matrix must be square." << std::endl;
+            throw "Error! The matrix must be square and have a non-zero determinant.";
             return { lines,columns };
         }
         for (int i = 0; i < lines; i++) {
@@ -422,11 +439,34 @@ public:
                 }
             }
         }
-        if (NewMatrix,matrix==matrix)
+        if (NewMatrix.matrix==matrix)
         {
             return true;
         }
         return false;
+    }
+    Matrix operator =(Matrix Second)
+    {
+        lines=Second.GetLines();
+        columns=Second.GetColumns();
+        for (int i = 0; i < lines; i++)
+        {
+            delete[] matrix[i];
+        }
+        delete[] matrix;
+        T** newMatrix=new T*[Second.GetLines()];
+        for (int i=0;i<Second.GetLines();++i)
+        {
+            newMatrix[i]=new T[columns];
+        }
+        for (int i=0;i<lines;i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                matrix[i][j] = Second.matrix[i][j];
+            }
+        }
+        this->matrix = newMatrix;
     }
 };
 template<typename T>
@@ -440,6 +480,42 @@ Matrix<T> operator * (T a, Matrix<T> First)
     return Matrix{ First.GetLines(),First.GetColumns(),First.GetMatrix() };
 }
 template<typename T>
-bool operator !=(int a, Matrix<T> First);
+bool operator !=(int a, Matrix<T> First)
+{
+    Matrix NewMatrix(First.GetLines(), First.GetColumns());
+    for (int i = 0; i < First.GetLines(); i++) {
+        for (int j = 0; j < First.GetColumns(); j++) {
+            if (i == j) {
+                NewMatrix.GetMatrix()[i][i] += a;
+            }
+        }
+    }
+    if (First!=NewMatrix)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 template<typename T>
-bool operator ==(int a, Matrix<T> First);
+bool operator ==(int a, Matrix<T> First)
+{
+    Matrix NewMatrix(First.GetLines(), First.GetColumns());
+    for (int i = 0; i < First.GetLines(); i++) {
+        for (int j = 0; j < First.GetColumns(); j++) {
+            if (i == j) {
+                NewMatrix.GetMatrix()[i][i] += a;
+            }
+        }
+    }
+    if (First==NewMatrix)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

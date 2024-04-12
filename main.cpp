@@ -1,7 +1,7 @@
 #include "ClassMatrix.h"
 int main()
 {
-    Matrix<double> matrix1;
+    Matrix<int> matrix1;
     matrix1.Print();
     std::string FileName;
     std::cout << "Enter the name of file (MatrixExample.txt)";
@@ -32,4 +32,13 @@ int main()
     std::cout << matrix1.Determinant()<<std::endl;
     std::cout << "Inverse matrix: " << std::endl;
     (!matrix1).Print();
+    std::cout <<"Matrix assignment"<<std::endl;
+    Matrix matrix3=matrix2;
+    matrix3.Print();
+    std::cout <<"Null matrix"<<std::endl;
+    Matrix matrix4=Matrix<int>::InitializationByZeros(3,4);
+    matrix4.Print();
+    std::cout <<"Matrix of units"<<std::endl;
+    Matrix matrix5=Matrix<int>::InitializationByUnits(4,5);
+    matrix5.Print();
 }
