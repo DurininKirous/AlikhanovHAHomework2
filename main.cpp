@@ -40,15 +40,15 @@ int main()
         std::cerr <<"Error!";
     }
     std::cout <<"Matrix assignment:"<<std::endl;
-    Matrix matrix3=matrix2;
+    decltype(matrix2) matrix3=matrix2;
     matrix3.Print();
     std::cout <<"Null matrix:"<<std::endl;
-    Matrix matrix4=Matrix<int>::InitializationByZeros(4,4);
+    Matrix<int> matrix4=Matrix<int>::InitializationByZeros(4,4);
     matrix4.Print();
     std::cout <<"Matrix of units:"<<std::endl;
     try
     {
-        Matrix matrix5=Matrix<int>::InitializationByUnits(4,4);
+        Matrix<int> matrix5=Matrix<int>::InitializationByUnits(4,4);
         matrix5.Print();
     }
     catch (...)
