@@ -20,10 +20,10 @@ public:
     }
     void Print()
     {
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
             std::cout << "[";
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 if (j != columns - 1) { std::cout << matrix[i][j] << " "; }
                 else { std::cout << matrix[i][j]; }
@@ -35,9 +35,9 @@ public:
     void Init()
     {
         std::cout << "Fill out the matrix!\n";
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 std::cin >> matrix[i][j];
             }
@@ -51,9 +51,9 @@ public:
         std::string endFileName="/home/durininkirous/Homework/"+FileName;
         std::ofstream out;
         out.open(endFileName);
-        for (int i = 0; i < lines; i++) {
+        for (int i = 0; i < lines; ++i) {
             out <<"[";
-            for (int j = 0; j < columns; j++) {
+            for (int j = 0; j < columns; ++j) {
                 out <<matrix[i][j];
                 if (j != columns - 1) { out <<" "; }
             }
@@ -64,7 +64,7 @@ public:
     void FirstElementaryTransformation(int FirstLine, int SecondLine)
     {
         T tmp;
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < columns; ++i)
         {
             tmp = matrix[FirstLine][i];
             matrix[FirstLine][i] = matrix[SecondLine][i];
@@ -74,7 +74,7 @@ public:
     template <typename T1>
     void SecondElementaryTransformation(int ChangeLine, T1 MultiPlier)
     {
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < columns; ++i)
         {
             matrix[ChangeLine][i] *= MultiPlier;
         }
@@ -82,7 +82,7 @@ public:
     template <typename T1>
     void ThirdElementaryTransformation(int TakeLine, T1 MultiPlier, int ChangeLine)
     {
-        for (int i = 0; i < columns; i++)
+        for (int i = 0; i < columns; ++i)
         {
             matrix[ChangeLine][i] += matrix[TakeLine][i] * MultiPlier;
         }
@@ -93,15 +93,19 @@ public:
     }
     static Matrix InitializationByUnits(int lines, int columns)
     {
-        Matrix NewMatrix{lines, columns};
-        for (int i=0;i<NewMatrix.lines;++i)
+        if (lines!=columns) {throw "Error! Identity matrix can only be square";}
+        else
         {
-            for (int j=0;j<NewMatrix.columns;++j)
+            Matrix NewMatrix{lines, columns};
+            for (int i=0;i<NewMatrix.lines;++i)
             {
-                NewMatrix.matrix[i][j]=1;
+                for (int j=0;j<NewMatrix.columns;++j)
+                {
+                    if (i==j) {NewMatrix.matrix[i][j]=1;}
+                }
             }
+            return NewMatrix;
         }
-        return NewMatrix;
     }
     T Determinant()
     {
@@ -127,8 +131,10 @@ public:
     void Transposition()
     {
         T tmp;
-        for (int i = 0; i < lines; i++) {
-            for (int j = 0; j < i; j++) {
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < i; ++j)
+            {
                 tmp = matrix[i][j];
                 matrix[i][j] = matrix[j][i];
                 matrix[j][i] = tmp;
@@ -163,13 +169,13 @@ public:
         this->lines = lines;
         this->columns = columns;
         T** matrix = new T*[lines];
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
             matrix[i] = new T[columns];
         }
         for (int i=0;i<lines;i++)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 matrix[i][j] = OtherMatrix[i][j];
             }
@@ -181,13 +187,13 @@ public:
         this->lines = lines;
         this->columns = columns;
         T** matrix = new T* [lines];
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
             matrix[i] = new T[columns];
         }
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 matrix[i][j] = 0;
             }
@@ -203,9 +209,9 @@ public:
         {
             matrix[i] = new T[columns];
         }
-        for (int i=0;i<lines;i++)
+        for (int i=0;i<lines;++i)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 matrix[i][j] = p.matrix[i][j];
             }
@@ -219,13 +225,16 @@ public:
         this->lines = p.lines - 1;
         this->columns = p.columns - 1;
         T** matrix = new T* [lines];
-        for (int i = 0; i < lines; i++) {
+        for (int i = 0; i < lines; ++i)
+        {
             matrix[i] = new T[columns];
         }
-        for (int i = 0; i < p.lines; i++) {
+        for (int i = 0; i < p.lines; ++i)
+        {
             m = 0;
             if (i!= line) {
-                for (int j = 0; j < p.columns; j++) {
+                for (int j = 0; j < p.columns; ++j)
+                {
                     if (j!= column) {
                         matrix[k][m] = p.matrix[i][j];
                         m += 1;
@@ -286,7 +295,7 @@ public:
     };
     ~Matrix()
     {
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
             delete[] matrix[i];
         }
@@ -296,10 +305,13 @@ public:
     auto operator + (Matrix<T1> Second)-> Matrix<decltype(matrix[0][0]+Second.GetMatrix()[0][0])>
     {
         using MatrixSum = Matrix<decltype(matrix[0][0]+Second.GetMatrix()[0][0])>;
-        if (lines == Second.GetLines() && columns == Second.GetColumns()) {
+        if (lines == Second.GetLines() && columns == Second.GetColumns())
+        {
             MatrixSum ReturnMatrix(lines, columns);
-            for (int i = 0; i < lines; ++i) {
-                for (int j = 0; j < columns; ++j) {
+            for (int i = 0; i < lines; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
                     ReturnMatrix.GetMatrix()[i][j]=matrix[i][j] + Second.GetMatrix()[i][j];
                 }
             }
@@ -314,10 +326,13 @@ public:
     auto operator - (Matrix<T1> Second)-> Matrix<decltype(matrix[0][0]-Second.GetMatrix()[0][0])>
     {
         using MatrixSub = Matrix<decltype(matrix[0][0]-Second.GetMatrix()[0][0])>;
-        if (lines == Second.GetLines() && columns == Second.GetColumns()) {
+        if (lines == Second.GetLines() && columns == Second.GetColumns())
+        {
             MatrixSub ReturnMatrix(lines, columns);
-            for (int i = 0; i < lines; ++i) {
-                for (int j = 0; j < columns; ++j) {
+            for (int i = 0; i < lines; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
                     ReturnMatrix.GetMatrix()[i][j]=matrix[i][j] - Second.GetMatrix()[i][j];
                 }
             }
@@ -334,12 +349,15 @@ public:
         using MatrixMult = Matrix<decltype(matrix[0][0]*Second.GetMatrix()[0][0])>;
         using Mult=decltype(matrix[0][0]*Second.GetMatrix()[0][0]);
         Mult element;
-        if (columns == Second.GetLines()) {
+        if (columns == Second.GetLines())
+        {
             MatrixMult NewMatrix(lines, Second.GetColumns());
             for (int i = 0; i < lines; i++) {
-                for (int j = 0; j < Second.GetColumns(); j++) {
+                for (int j = 0; j < Second.GetColumns(); j++)
+                {
                     element = 0;
-                    for (int k = 0; k < columns; k++) {
+                    for (int k = 0; k < columns; k++)
+                    {
                         element += matrix[i][k] * Second.GetMatrix()[k][j];
                     }
                     NewMatrix.GetMatrix()[i][j] = element;
@@ -354,10 +372,14 @@ public:
     }
     bool operator != (Matrix<T> Second)
     {
-        if (lines == Second.lines && columns == Second.columns) {
-            for (int i = 0; i < lines; i++) {
-                for (int j = 0; j < columns; j++) {
-                    if (matrix[i][j] != Second.matrix[i][j]) {
+        if (lines == Second.lines && columns == Second.columns)
+        {
+            for (int i = 0; i < lines; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    if (matrix[i][j] != Second.matrix[i][j])
+                    {
                         return true;
                     }
                 }
@@ -371,10 +393,14 @@ public:
     template <typename T1>
     bool operator == (Matrix<T1> Second)
     {
-        if (lines == Second.GetLines() && columns == Second.GetColumns()) {
-            for (int i = 0; i < lines; i++) {
-                for (int j = 0; j < columns; j++) {
-                    if (matrix[i][j] != Second.GetMatrix()[i][j]) {
+        if (lines == Second.GetLines() && columns == Second.GetColumns())
+        {
+            for (int i = 0; i < lines; ++i)
+            {
+                for (int j = 0; j < columns; ++j)
+                {
+                    if (matrix[i][j] != Second.GetMatrix()[i][j])
+                    {
                         return false;
                     }
                 }
@@ -394,8 +420,8 @@ public:
             throw "Error! The matrix must be square and have a non-zero determinant.";
             return { lines,columns };
         }
-        for (int i = 0; i < lines; i++) {
-            for (int j = 0; j < lines; j++) {
+        for (int i = 0; i < lines; ++i) {
+            for (int j = 0; j < lines; ++j) {
                 Matrix Addition(*this, i, j);
                 AlgebraicAdditions.GetMatrix()[i][j] = pow(-1, i + j) * Addition.Determinant() / det;
             }
@@ -406,8 +432,10 @@ public:
     Matrix operator * (int a)
     {
         Matrix ReturnMatrix(lines, columns);
-        for (int i = 0; i < lines; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
                 ReturnMatrix.matrix[i][j]=matrix[i][j] * a;
             }
         }
@@ -416,8 +444,10 @@ public:
     bool operator !=(int a)
     {
         Matrix NewMatrix(lines, columns);
-        for (int i = 0; i < lines; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
                 if (i == j) {
                     NewMatrix.matrix[i][i] += a;
                 }
@@ -432,8 +462,10 @@ public:
     bool operator ==(int a)
     {
         Matrix NewMatrix(lines, columns);
-        for (int i = 0; i < lines; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
                 if (i == j) {
                     NewMatrix.matrix[i][i] += a;
                 }
@@ -449,7 +481,7 @@ public:
     {
         lines=Second.GetLines();
         columns=Second.GetColumns();
-        for (int i = 0; i < lines; i++)
+        for (int i = 0; i < lines; ++i)
         {
             delete[] matrix[i];
         }
@@ -459,9 +491,9 @@ public:
         {
             newMatrix[i]=new T[columns];
         }
-        for (int i=0;i<lines;i++)
+        for (int i=0;i<lines;++i)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns; ++j)
             {
                 matrix[i][j] = Second.matrix[i][j];
             }
@@ -472,8 +504,10 @@ public:
 template<typename T>
 Matrix<T> operator * (T a, Matrix<T> First)
 {
-    for (int i = 0; i < First.GetLines(); i++) {
-        for (int j = 0; j < First.GetColumns(); j++) {
+    for (int i = 0; i < First.GetLines(); ++i)
+    {
+        for (int j = 0; j < First.GetColumns(); ++j)
+        {
             First.GetMatrix()[i][j] *= a;
         }
     }
@@ -483,8 +517,10 @@ template<typename T>
 bool operator !=(int a, Matrix<T> First)
 {
     Matrix NewMatrix(First.GetLines(), First.GetColumns());
-    for (int i = 0; i < First.GetLines(); i++) {
-        for (int j = 0; j < First.GetColumns(); j++) {
+    for (int i = 0; i < First.GetLines(); ++i)
+    {
+        for (int j = 0; j < First.GetColumns(); ++j)
+        {
             if (i == j) {
                 NewMatrix.GetMatrix()[i][i] += a;
             }
@@ -501,10 +537,13 @@ bool operator !=(int a, Matrix<T> First)
 }
 template<typename T>
 bool operator ==(int a, Matrix<T> First)
+
 {
     Matrix NewMatrix(First.GetLines(), First.GetColumns());
-    for (int i = 0; i < First.GetLines(); i++) {
-        for (int j = 0; j < First.GetColumns(); j++) {
+    for (int i = 0; i < First.GetLines(); ++i)
+    {
+        for (int j = 0; j < First.GetColumns(); ++j)
+        {
             if (i == j) {
                 NewMatrix.GetMatrix()[i][i] += a;
             }

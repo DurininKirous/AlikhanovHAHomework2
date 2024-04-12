@@ -31,14 +31,28 @@ int main()
     std::cout << "Matrix determinant: " << std::endl;
     std::cout << matrix1.Determinant()<<std::endl;
     std::cout << "Inverse matrix: " << std::endl;
-    (!matrix1).Print();
-    std::cout <<"Matrix assignment"<<std::endl;
+    try
+    {
+        (!matrix1).Print();
+    }
+    catch (...)
+    {
+        std::cerr <<"Error!";
+    }
+    std::cout <<"Matrix assignment:"<<std::endl;
     Matrix matrix3=matrix2;
     matrix3.Print();
-    std::cout <<"Null matrix"<<std::endl;
+    std::cout <<"Null matrix:"<<std::endl;
     Matrix matrix4=Matrix<int>::InitializationByZeros(3,4);
     matrix4.Print();
-    std::cout <<"Matrix of units"<<std::endl;
-    Matrix matrix5=Matrix<int>::InitializationByUnits(4,5);
-    matrix5.Print();
+    std::cout <<"Matrix of units:"<<std::endl;
+    try {
+        Matrix matrix5=Matrix<int>::InitializationByUnits(4,4);
+        matrix5.Print();
+    }
+    catch (...)
+    {
+        std::cout <<"Error! The matrix is not square\n";
+    }
+
 }
