@@ -43,10 +43,11 @@ int main()
     Matrix matrix3=matrix2;
     matrix3.Print();
     std::cout <<"Null matrix:"<<std::endl;
-    Matrix matrix4=Matrix<int>::InitializationByZeros(3,4);
+    Matrix matrix4=Matrix<int>::InitializationByZeros(4,4);
     matrix4.Print();
     std::cout <<"Matrix of units:"<<std::endl;
-    try {
+    try
+    {
         Matrix matrix5=Matrix<int>::InitializationByUnits(4,4);
         matrix5.Print();
     }
@@ -54,5 +55,6 @@ int main()
     {
         std::cout <<"Error! The matrix is not square\n";
     }
-
+    std::cout <<"Comparison of null matrice and scalar(zero):"<<std::endl;
+    std::cout <<(matrix4==0)<<std::endl;
 }

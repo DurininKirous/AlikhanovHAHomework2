@@ -318,7 +318,7 @@ public:
             return ReturnMatrix;
         }
         else {
-            throw "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one";
+            std::cerr << "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one"<<std::endl;
             return MatrixSum{ lines,columns };
         }
     }
@@ -339,7 +339,7 @@ public:
             return ReturnMatrix;
         }
         else {
-            throw "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one";
+            std::cerr << "Error! The matrices must be of the same dimension. Returning a zero matrix with the same dimension as the first one"<<std::endl;
             return MatrixSub{ lines,columns };
         }
     }
@@ -366,9 +366,22 @@ public:
             return MatrixMult{ lines,Second.GetColumns(),NewMatrix.GetMatrix() };
         }
         else {
-            throw "Error! The matrices must be of the appropriate size. Return a zero matrix with the same dimension as the first one";
+            std::cerr << "Error! The matrices must be of the appropriate size. Return a zero matrix with the same dimension as the first one"<<std::endl;
             return MatrixMult{ lines,columns };
         }
+    }
+    template <typename T1>
+    auto operator * (T1 a) -> Matrix<decltype(a*matrix[0][0])>
+    {
+        using MatrixMult = Matrix<decltype(a*matrix[0][0])>;
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
+                matrix()[i][j] *= a;
+            }
+        }
+        return MatrixMult{ lines,columns,matrix };
     }
     bool operator != (Matrix<T> Second)
     {
@@ -411,6 +424,52 @@ public:
             return false;
         }
     }
+    template<typename T1>
+    bool operator ==(T1 a)
+    {
+        if (columns!=lines) {return false;}
+        Matrix<T1> NewMatrix(lines, columns);
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
+                if (i == j) {
+                    NewMatrix.GetMatrix()[i][i] = a;
+                }
+            }
+        }
+        if (*this==NewMatrix)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    template<typename T1>
+    bool operator !=(T1 a)
+    {
+        if (columns!=lines) {return false;}
+        Matrix<T1> NewMatrix(lines, columns);
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int j = 0; j < columns; ++j)
+            {
+                if (i == j) {
+                    NewMatrix.GetMatrix()[i][i] = a;
+                }
+            }
+        }
+        if (*this!=NewMatrix)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
     Matrix<double> operator ! ()
     {
         Matrix<double> AlgebraicAdditions(lines, columns);
@@ -441,42 +500,6 @@ public:
         }
         return ReturnMatrix;
     }
-    bool operator !=(int a)
-    {
-        Matrix NewMatrix(lines, columns);
-        for (int i = 0; i < lines; ++i)
-        {
-            for (int j = 0; j < columns; ++j)
-            {
-                if (i == j) {
-                    NewMatrix.matrix[i][i] += a;
-                }
-            }
-        }
-        if (NewMatrix,matrix!=matrix)
-        {
-            return true;
-        }
-        return false;
-    }
-    bool operator ==(int a)
-    {
-        Matrix NewMatrix(lines, columns);
-        for (int i = 0; i < lines; ++i)
-        {
-            for (int j = 0; j < columns; ++j)
-            {
-                if (i == j) {
-                    NewMatrix.matrix[i][i] += a;
-                }
-            }
-        }
-        if (NewMatrix.matrix==matrix)
-        {
-            return true;
-        }
-        return false;
-    }
     Matrix operator =(Matrix Second)
     {
         lines=Second.GetLines();
@@ -501,60 +524,4 @@ public:
         this->matrix = newMatrix;
     }
 };
-template<typename T>
-Matrix<T> operator * (T a, Matrix<T> First)
-{
-    for (int i = 0; i < First.GetLines(); ++i)
-    {
-        for (int j = 0; j < First.GetColumns(); ++j)
-        {
-            First.GetMatrix()[i][j] *= a;
-        }
-    }
-    return Matrix{ First.GetLines(),First.GetColumns(),First.GetMatrix() };
-}
-template<typename T>
-bool operator !=(int a, Matrix<T> First)
-{
-    Matrix NewMatrix(First.GetLines(), First.GetColumns());
-    for (int i = 0; i < First.GetLines(); ++i)
-    {
-        for (int j = 0; j < First.GetColumns(); ++j)
-        {
-            if (i == j) {
-                NewMatrix.GetMatrix()[i][i] += a;
-            }
-        }
-    }
-    if (First!=NewMatrix)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
-template<typename T>
-bool operator ==(int a, Matrix<T> First)
 
-{
-    Matrix NewMatrix(First.GetLines(), First.GetColumns());
-    for (int i = 0; i < First.GetLines(); ++i)
-    {
-        for (int j = 0; j < First.GetColumns(); ++j)
-        {
-            if (i == j) {
-                NewMatrix.GetMatrix()[i][i] += a;
-            }
-        }
-    }
-    if (First==NewMatrix)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
